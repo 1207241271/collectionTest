@@ -9,5 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface DetailViewController : UIViewController
-@property (nonatomic ,strong) NSString *imageName;
+@property (nonatomic ,strong) NSString *imageUrl;
+@property (nonatomic ,assign) NSInteger index;
 @end

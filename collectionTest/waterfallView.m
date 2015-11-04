@@ -12,6 +12,7 @@
 #import "SVPullToRefresh.h"
 #import "DetailViewController.h"
 #import "UIImageView+WebCache.h"
+#import <AddressBook/AddressBook.h>
 
 @implementation waterfallView{
     NSInteger loadNumb;
@@ -19,6 +20,7 @@
     NSArray *arrayImage;
     NSArray *arrayUrl;
     NSInteger times;
+    NSArray *listContacts;
 }
 
 #define debug 1
@@ -32,6 +34,16 @@
     arrayImage=[[NSArray alloc] initWithContentsOfFile:imageFile];
     NSString *urlFile=[[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:@"Url.plist"];
     arrayUrl=[[NSArray alloc] initWithContentsOfFile:urlFile];
+    
+    
+    CFErrorRef error=NULL;
+    ABAddressBookRef addressBook=ABAddressBookCreateWithOptions(NULL, &error);
+    ABAddressBookRequestAccessWithCompletion(addressBook, ^(bool granted, CFErrorRef error) {
+        if (granted) {
+            listContacts=CFBridgingRelease(ABAddressBookCopyArrayOfAllPeople(addressBook));
+        }
+    });
+    CFRelease(addressBook);
 }
 
 
@@ -114,8 +126,17 @@
         NSLog(@"%@",imageURL);
         //cell.imageView.image=image;
     }];
-        cell.label.text=[NSString stringWithFormat:@"%i  %i",indexPath.section,indexPath.row];
-       return cell;
+    
+    ABRecordRef person=CFBridgingRetain([listContacts objectAtIndex:indexPath.section]);
+    NSString *firstName=CFBridgingRelease(ABRecordCopyValue(person, kABPersonFirstNameProperty));
+    firstName=firstName!=nil?firstName:@"";
+    NSString *lastName=CFBridgingRelease(ABRecordCopyValue(person, kABPersonLastNameProperty));
+    lastName=lastName!=nil?lastName:@"";
+    
+    cell.label.text=[NSString stringWithFormat:@"%@  %@",firstName,lastName];
+
+    CFRelease(person);
+    return cell;
 }
 
 #pragma mark - Refresh Func
@@ -144,7 +165,14 @@
     int64_t delayInSecond=2.0;
     dispatch_time_t popTime=dispatch_time(DISPATCH_TIME_NOW, delayInSecond * NSEC_PER_SEC);
     dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
-        loadNumb+=3;
+        if (loadNumb==listContacts.count) {
+            [weakSelf.collectionView.infiniteScrollingView stopAnimating];
+            return ;
+        }
+        else loadNumb+=3;
+        if (loadNumb>listContacts.count) {
+            loadNumb=listContacts.count;
+        }
         [weakSelf.collectionView reloadData];
         [weakSelf.collectionView.infiniteScrollingView stopAnimating];
     });
@@ -157,7 +185,8 @@
         NSLog(@"%@ is running %@",self.class,NSStringFromSelector(_cmd));
     }
     DetailViewController *detailViewController=[[DetailViewController alloc]init];
-    detailViewController.imageName=[[arrayUrl objectAtIndex:indexPath.row] objectAtIndex:indexPath.section%6];
+    detailViewController.imageUrl=[[arrayUrl objectAtIndex:indexPath.row] objectAtIndex:indexPath.section%6];
+    detailViewController.index=indexPath.section;
     [self.navigationController pushViewController:detailViewController animated:YES];
 }
 

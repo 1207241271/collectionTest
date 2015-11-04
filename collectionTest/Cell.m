@@ -14,7 +14,8 @@
     self = [super initWithFrame:frame];
     if (self) {
         self.imageView=[[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 150, 130)];
-        self.label=[[UILabel alloc]initWithFrame:CGRectMake(54, 130, 42, 20)];
+        self.label=[[UILabel alloc]initWithFrame:CGRectMake(0, 130, 150, 20)];
+        self.label.textAlignment = NSTextAlignmentCenter;
         [self addSubview:self.imageView];
         [self addSubview:self.label];
         
