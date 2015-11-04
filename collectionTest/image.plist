@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<array>
+	<array>
+		<string>add.png</string>
+		<string>back.png</string>
+		<string>camera.png</string>
+		<string>cancel.png</string>
+		<string>check.png</string>
+		<string>delete.png</string>
+	</array>
+	<array>
+		<string>flag.png</string>
+		<string>ff.png</string>
+		<string>mail.png</string>
+		<string>heart.png</string>
+		<string>parent.png</string>
+		<string>pause.png</string>
+	</array>
+</array>
+</plist>

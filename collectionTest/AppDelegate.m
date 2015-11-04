@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "waterfallView.h"
 
 @interface AppDelegate ()
 
@@ -16,7 +17,11 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    // Override point for customization after application launch.
+    self.window=[[UIWindow alloc]initWithFrame:[[UIScreen mainScreen] bounds]];
+    UINavigationController *navigationViewController=[[UINavigationController alloc]initWithRootViewController:[[waterfallView alloc]init]];
+    self.window.rootViewController=navigationViewController;
+    self.window.backgroundColor=[UIColor whiteColor];
+    [self.window makeKeyAndVisible];
     return YES;
 }
 
